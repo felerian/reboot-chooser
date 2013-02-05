@@ -4,7 +4,7 @@ const GLib = imports.gi.GLib;
 const Gio = imports.gi.Gio;
 
 const GRUB_CFG = "/boot/grub/grub.cfg";
-const GRUB_ENV = "/boot/grub/grubenv";
+//~ const GRUB_ENV = "/boot/grub/grubenv";
 
 let chooserItem = null;
 
@@ -20,7 +20,7 @@ function parseGrubConfig() {
         line = lines[i];
         if (line.substring(0,9) == "menuentry") {
             delimiter = line.charAt(10);
-            endIndex = line.lastIndexOf(delimiter);
+            endIndex = line.indexOf(delimiter, 11);
             newLabel = line.substring(11, endIndex);
             newCommand = "pkexec grub-reboot " + delimiter + newLabel + delimiter;
             result.push({label: newLabel, index: counter, command: newCommand});
@@ -30,20 +30,20 @@ function parseGrubConfig() {
     return result;
 }
 
-function parseGrubEnv() {
-    let f = Gio.file_new_for_path(GRUB_ENV);
-    let success, content;
-    [success, content] = f.load_contents(null, null);
-    let lines = String(content).split("\n");
-    let line, delimiter, endIndex, newLabel, newCommand;
-    let counter = 1;
-    for (i in lines) {
-        line = lines[i];
-        if (line.substring(0,12) == "saved_entry=") {
-            return line.substring(12, line.length);
-        }
-    }
-}
+//~ function parseGrubEnv() {
+    //~ let f = Gio.file_new_for_path(GRUB_ENV);
+    //~ let success, content;
+    //~ [success, content] = f.load_contents(null, null);
+    //~ let lines = String(content).split("\n");
+    //~ let line, delimiter, endIndex, newLabel, newCommand;
+    //~ let counter = 1;
+    //~ for (i in lines) {
+        //~ line = lines[i];
+        //~ if (line.substring(0,12) == "saved_entry=") {
+            //~ return line.substring(12, line.length);
+        //~ }
+    //~ }
+//~ }
 
 function rebootInto(system) {
     return function () {
@@ -55,7 +55,7 @@ function init() {}
 
 function enable() {
     let systems = parseGrubConfig();
-    let defaultSystem = parseGrubEnv();
+    //~ let defaultSystem = parseGrubEnv();
     
     //~ Main.notify("Default system: " + defaultSystem);
     
