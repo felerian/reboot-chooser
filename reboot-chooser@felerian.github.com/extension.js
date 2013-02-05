@@ -59,7 +59,14 @@ function enable() {
     
     //~ Main.notify("Default system: " + defaultSystem);
     
-    let userMenu = Main.panel._statusArea.userMenu;
+    let userMenu = null;
+    if ("statusArea" in Main.panel) {
+        // Gnome-Shell 3.6:
+        userMenu = Main.panel.statusArea.userMenu;
+    } else {
+        // Gnome-Shell 3.4:
+        userMenu = Main.panel._statusArea.userMenu;
+    }
     let children = userMenu.menu._getMenuItems();
     chooserItem = new PopupMenu.PopupSubMenuMenuItem("Reboot into ...");
     userMenu.menu.addMenuItem(chooserItem, children.length - 1);
